@@ -24,7 +24,7 @@
   const MAX_ROLLS_PER_LEVEL = 8;
   const SPECIAL_PINS_PER_LEVEL = MAX_ROLLS_PER_LEVEL;
   const SPECIAL_BALLS_PER_LEVEL = 0;
-  const PIN_SPECIAL_TYPES = ["rocket", "pinata", "pinatastar", "balloon", "firework", "jelly", "catpaw", "toytrain", "popcorn", "kite", "magicpaint", "flower", "racecar", "airplane", "helicopter", "bus", "bulldozer", "bunny", "frog", "bird", "dogzoomies", "batbaseball", "basketballdribble", "basketballhoop", "hockeypuck", "curling", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "volleyballspike", "baseballcatch", "bowlingstrike", "skijump", "gymnasticsflip"];
+  const PIN_SPECIAL_TYPES = ["rocket", "pinata", "pinatastar", "balloon", "firework", "jelly", "catpaw", "toytrain", "popcorn", "kite", "magicpaint", "flower", "racecar", "airplane", "helicopter", "bus", "bulldozer", "bunny", "frog", "bird", "dogzoomies", "batbaseball", "basketballdribble", "basketballhoop", "hockeypuck", "curling", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "baseballcatch", "bowlingstrike", "wheelchairsprint"];
   const BALL_SPECIAL_TYPES = [];
   const SPECIAL_TYPES = PIN_SPECIAL_TYPES;
   const SFX_GAIN = 4.1;
@@ -1066,7 +1066,8 @@
     if (ballSpecial === "meteor") makeMeteorImpact(pin.x, pin.y);
     if (ballSpecial === "giantbounce") makePinataBurst(pin.x, pin.y);
     const longestSpecial = knocked.reduce((m, p) => Math.max(m, p.rocket ? ((p.rocket.finishAt || (p.rocket.startedAt + p.rocket.duration)) - nowMs()) : 0), 0);
-    game.resolvingUntil = nowMs() + (specialHit ? Math.max(700, longestSpecial + 160) : PIN_FADE_DELAY_MS + PIN_FADE_MS + 160);
+    const safeLongestSpecial = Number.isFinite(longestSpecial) ? longestSpecial : 700;
+    game.resolvingUntil = nowMs() + (specialHit ? Math.max(700, safeLongestSpecial + 160) : PIN_FADE_DELAY_MS + PIN_FADE_MS + 160);
   }
 
   function resolveMiss() {
@@ -1158,8 +1159,8 @@
     pin.vx = 0;
     pin.vy = 0;
     pin.angularVelocity = 0;
-    const durationMap = { rocket: randInt(2400, 3200), pinata: randInt(1000, 1500), pinatastar: randInt(1100, 1600), balloon: randInt(1800, 2600), firework: randInt(1700, 2500), jelly: randInt(1200, 1900), catpaw: randInt(2400, 3300), treasure: randInt(1000, 1600), toytrain: randInt(1800, 2600), popcorn: randInt(900, 1400), kite: randInt(1800, 2600), magicpaint: randInt(1200, 1800), flower: randInt(1300, 2100), racecar: randInt(1600, 2400), airplane: randInt(2000, 2900), helicopter: randInt(2200, 3200), bus: randInt(1800, 2500), bulldozer: randInt(1900, 2700), bunny: randInt(1700, 2400), frog: randInt(1800, 2500), fish: randInt(1900, 2600), bird: randInt(1800, 2500), penguin: randInt(1900, 2600), dogzoomies: randInt(2100, 3000), batbaseball: randInt(1500, 2300), basketballdribble: randInt(1800, 2600), basketballhoop: randInt(1700, 2500), hockeypuck: randInt(1500, 2300), curling: randInt(2000, 2900), footballthrow: randInt(1700, 2500), soccergoal: randInt(1700, 2500), tennisserve: randInt(1500, 2300), golfdrive: randInt(1600, 2400), volleyballspike: randInt(1600, 2400), baseballcatch: randInt(1600, 2400), bowlingstrike: randInt(1700, 2500), skijump: randInt(1900, 2800), gymnasticsflip: randInt(1700, 2500) };
-    const duration = durationMap[type];
+    const durationMap = { rocket: randInt(2400, 3200), pinata: randInt(1000, 1500), pinatastar: randInt(1100, 1600), balloon: randInt(1800, 2600), firework: randInt(1700, 2500), jelly: randInt(1200, 1900), catpaw: randInt(2400, 3300), treasure: randInt(1000, 1600), toytrain: randInt(1800, 2600), popcorn: randInt(900, 1400), kite: randInt(1800, 2600), magicpaint: randInt(1200, 1800), flower: randInt(1300, 2100), racecar: randInt(1600, 2400), airplane: randInt(2000, 2900), helicopter: randInt(2200, 3200), bus: randInt(1800, 2500), bulldozer: randInt(1900, 2700), bunny: randInt(1700, 2400), frog: randInt(1800, 2500), fish: randInt(1900, 2600), bird: randInt(1800, 2500), penguin: randInt(1900, 2600), dogzoomies: randInt(2100, 3000), batbaseball: randInt(1500, 2300), basketballdribble: randInt(1800, 2600), basketballhoop: randInt(1700, 2500), hockeypuck: randInt(1500, 2300), curling: randInt(2000, 2900), footballthrow: randInt(1700, 2500), soccergoal: randInt(1700, 2500), tennisserve: randInt(1500, 2300), golfdrive: randInt(1600, 2400), volleyballspike: randInt(1600, 2400), baseballcatch: randInt(1600, 2400), bowlingstrike: randInt(1700, 2500), wheelchairsprint: randInt(2200, 3200), skijump: randInt(1900, 2800), gymnasticsflip: randInt(1700, 2500) };
+    const duration = durationMap[type] || randInt(1700, 2500);
     const exitSide = Math.random() < 0.5 ? -1 : 1;
     const exitX = exitSide < 0 ? -layout.pinH * 1.2 : view.w + layout.pinH * 1.2;
     const exitY = rand(layout.playTop + layout.pinH * 0.2, layout.playBottom - layout.pinH * 0.4);
@@ -1255,6 +1256,10 @@
       audio.penguinSlide();
       pin.rocket.nextChug = current + 480;
       pin.rocket.path = [{ x: pin.x, y: pin.y }, { x: layout.wallLeft + layout.pinH * 0.6, y: pin.y + rand(-layout.pinH * 0.06, layout.pinH * 0.06) }, { x: layout.wallRight - layout.pinH * 0.6, y: pin.y + rand(-layout.pinH * 0.06, layout.pinH * 0.06) }, { x: exitX, y: pin.y + rand(-layout.pinH * 0.06, layout.pinH * 0.06) }];
+    } else if (type === "wheelchairsprint") {
+      audio.raceCarRev();
+      pin.rocket.nextChug = current + 340;
+      pin.rocket.path = [{ x: pin.x, y: pin.y }, { x: layout.wallLeft + layout.pinH * 0.65, y: pin.y + rand(-layout.pinH * 0.08, layout.pinH * 0.08) }, { x: layout.wallRight - layout.pinH * 0.65, y: pin.y + rand(-layout.pinH * 0.08, layout.pinH * 0.08) }, { x: exitX, y: pin.y + rand(-layout.pinH * 0.10, layout.pinH * 0.10) }];
     } else if (type === "dogzoomies") {
       audio.dogZoomies();
       pin.rocket.nextChug = current + 260;
@@ -1334,10 +1339,11 @@
   function updateSpecialPin(pin, current, dt) {
     const s = pin.rocket;
     if (!s) return;
+    if (!Number.isFinite(s.duration) || s.duration <= 0) { pin.removed = true; return; }
     const age = current - s.startedAt;
     const t = clamp(age / s.duration, 0, 1);
 
-    if (["rocket", "firework", "balloon", "toytrain", "kite", "racecar", "airplane", "helicopter", "bus", "bulldozer", "bunny", "frog", "bird", "dogzoomies", "batbaseball", "basketballdribble", "basketballhoop", "hockeypuck", "curling", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "volleyballspike", "baseballcatch", "bowlingstrike", "skijump", "gymnasticsflip"].includes(s.type)) {
+    if (["rocket", "firework", "balloon", "toytrain", "kite", "racecar", "airplane", "helicopter", "bus", "bulldozer", "bunny", "frog", "bird", "dogzoomies", "batbaseball", "basketballdribble", "basketballhoop", "hockeypuck", "curling", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "volleyballspike", "baseballcatch", "bowlingstrike", "wheelchairsprint", "skijump", "gymnasticsflip"].includes(s.type)) {
       const path = s.path;
       const scaled = t * (path.length - 1);
       const segment = Math.min(path.length - 2, Math.floor(scaled));
@@ -1363,7 +1369,7 @@
       if (s.type === "frog" && !s.burstDone && current >= s.burstAt) { s.burstDone = true; makeFrogBurst(pin.x, pin.y); }
       if (s.type === "bird" && !s.burstDone && current >= s.burstAt) { s.burstDone = true; makeBirdBurst(pin.x, pin.y); }
       if (s.type === "dogzoomies" && !s.burstDone && current >= s.burstAt) { s.burstDone = true; makeDogBurst(pin.x, pin.y); }
-      if (["batbaseball", "basketballhoop", "hockeypuck", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "volleyballspike", "baseballcatch", "bowlingstrike", "skijump", "gymnasticsflip", "basketballdribble", "curling"].includes(s.type) && !s.burstDone && current >= s.burstAt) { s.burstDone = true; makeSportBurst(pin.x, pin.y, s.type); }
+      if (["batbaseball", "basketballhoop", "hockeypuck", "footballthrow", "soccergoal", "tennisserve", "golfdrive", "volleyballspike", "baseballcatch", "bowlingstrike", "wheelchairsprint", "skijump", "gymnasticsflip", "basketballdribble", "curling"].includes(s.type) && !s.burstDone && current >= s.burstAt) { s.burstDone = true; makeSportBurst(pin.x, pin.y, s.type); }
       if (s.type === "toytrain" && current >= (s.nextChug || 0)) { audio.toyTrainChug(); s.nextChug = current + 310; }
       if (s.type === "racecar" && current >= (s.nextChug || 0)) { audio.raceCarSkid(); s.nextChug = current + 420; }
       if (s.type === "airplane" && current >= (s.nextChug || 0)) { audio.airplanePass(); s.nextChug = current + 650; }
@@ -1375,6 +1381,7 @@
       if (s.type === "bird" && current >= (s.nextChug || 0)) { audio.birdChirp(); s.nextChug = current + 260; }
       if (s.type === "dogzoomies" && current >= (s.nextChug || 0)) { audio.dogZoomies(); s.nextChug = current + 260; }
       if (["basketballdribble", "curling"].includes(s.type) && current >= (s.nextChug || 0)) { audio.hitPins(1); s.nextChug = current + 360; }
+      if (s.type === "wheelchairsprint" && current >= (s.nextChug || 0)) { audio.raceCarSkid(); s.nextChug = current + 460; }
       if (t >= 1) {
         pin.removed = true;
         if ((s.type === "rocket" || s.type === "firework") && !game.pins.some(p => p !== pin && p.rocket && !p.removed && (p.rocket.type === "rocket" || p.rocket.type === "firework"))) audio.stopRocketFlight();
@@ -1889,6 +1896,7 @@
     if (type === "volleyballspike") return drawVolleyballSpikePin(pin, current);
     if (type === "baseballcatch") return drawBaseballCatchPin(pin, current);
     if (type === "bowlingstrike") return drawBowlingStrikePin(pin, current);
+    if (type === "wheelchairsprint") return drawWheelchairSprintPin(pin, current);
     if (type === "skijump") return drawSkiJumpPin(pin, current);
     if (type === "gymnasticsflip") return drawGymnasticsFlipPin(pin, current);
     return drawRocketPin(pin, current);
@@ -2389,89 +2397,524 @@
     ctx.restore();
   }
 
+  function drawBaseballShape(x, y, r, rot = 0) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    const g = ctx.createRadialGradient(-r * 0.32, -r * 0.34, r * 0.08, 0, 0, r);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.72, "#f7f4ee");
+    g.addColorStop(1, "#ded9cf");
+    ctx.fillStyle = g;
+    ctx.strokeStyle = "#928a7f";
+    ctx.lineWidth = Math.max(1.5, r * 0.10);
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = "#c82333";
+    ctx.lineWidth = Math.max(1.2, r * 0.09);
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.arc(-r * 0.45, 0, r * 0.80, -1.05, 1.05);
+    ctx.arc(r * 0.45, 0, r * 0.80, Math.PI - 1.05, Math.PI + 1.05);
+    ctx.stroke();
+    ctx.lineWidth = Math.max(0.8, r * 0.045);
+    for (let i = -4; i <= 4; i += 1) {
+      const yy = i * r * 0.18;
+      ctx.beginPath(); ctx.moveTo(-r * 0.73, yy - r * 0.055); ctx.lineTo(-r * 0.57, yy + r * 0.055); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(r * 0.73, yy - r * 0.055); ctx.lineTo(r * 0.57, yy + r * 0.055); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSoccerBallShape(x, y, r, rot = 0) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.fillStyle = "#f8f8f4";
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = Math.max(1.5, r * 0.08);
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#111";
+    drawStar(0, 0, r * 0.32, r * 0.18, 5);
+    for (let i = 0; i < 5; i += 1) {
+      const a = -Math.PI / 2 + i * TAU / 5;
+      const px = Math.cos(a) * r * 0.62;
+      const py = Math.sin(a) * r * 0.62;
+      ctx.beginPath();
+      ctx.moveTo(px + Math.cos(a) * r * 0.19, py + Math.sin(a) * r * 0.19);
+      for (let j = 1; j < 5; j += 1) {
+        const aa = a + j * TAU / 5;
+        ctx.lineTo(px + Math.cos(aa) * r * 0.19, py + Math.sin(aa) * r * 0.19);
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.strokeStyle = "#777";
+    ctx.lineWidth = Math.max(0.8, r * 0.035);
+    for (let i = 0; i < 5; i += 1) {
+      const a = -Math.PI / 2 + i * TAU / 5;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * r * 0.32, Math.sin(a) * r * 0.32);
+      ctx.lineTo(Math.cos(a) * r * 0.82, Math.sin(a) * r * 0.82);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBasketballShape(x, y, r, rot = 0, withSeams = true) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.fillStyle = "#e97925";
+    ctx.strokeStyle = "#5c2d12";
+    ctx.lineWidth = Math.max(2, r * 0.11);
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    if (withSeams) {
+      ctx.lineWidth = Math.max(1.5, r * 0.07);
+      ctx.beginPath();
+      ctx.moveTo(-r * 0.92, 0); ctx.lineTo(r * 0.92, 0);
+      ctx.moveTo(0, -r * 0.92); ctx.lineTo(0, r * 0.92);
+      ctx.arc(0, 0, r * 0.84, Math.PI * 0.30, Math.PI * 0.70);
+      ctx.arc(0, 0, r * 0.84, -Math.PI * 0.70, -Math.PI * 0.30);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawForwardArrowTrail(x1, y1, x2, y2, color) {
+    ctx.save();
+    ctx.globalAlpha = 0.32;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 - 8, x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function drawBatBaseballPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58; const swing = Math.sin(Math.min(1, age / 650) * Math.PI) * 0.95;
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(255,231,125,0.55)");
-    ctx.rotate(-0.75 + swing); ctx.fillStyle = "#b97843"; roundRect(ctx, -s * 0.08, -s * 0.48, s * 0.16, s * 0.92, s * 0.08); ctx.fill(); ctx.restore();
-    drawSportBall(pin.x + s * 0.40 + Math.sin(age/180)*6, pin.y - s * 0.08, s * 0.12, "#ffffff", "#c73b3b");
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.55;
+    const hitT = clamp((age - 260) / 1100, 0, 1);
+    const swing = Math.sin(clamp(age / 860, 0, 1) * Math.PI) * 1.22;
+    const ballX = pin.x + s * (0.32 + hitT * 0.72);
+    const ballY = pin.y - s * (0.16 + hitT * 0.18);
+    drawForwardArrowTrail(pin.x + s * 0.25, pin.y - s * 0.06, ballX - s * 0.14, ballY, "#ffe77d");
+    ctx.save();
+    ctx.translate(pin.x - s * 0.02, pin.y + s * 0.02);
+    ctx.rotate(-0.88 + swing);
+    ctx.strokeStyle = "#7a431d";
+    ctx.lineWidth = Math.max(2, s * 0.038);
+    ctx.fillStyle = "#d4a15a";
+    ctx.beginPath(); ctx.ellipse(-s * 0.58, 0, s * 0.09, s * 0.13, 0, 0, TAU); ctx.fill(); ctx.stroke();
+    const grad = ctx.createLinearGradient(-s * 0.62, 0, s * 0.78, 0);
+    grad.addColorStop(0, "#e3bd79"); grad.addColorStop(0.5, "#cb9150"); grad.addColorStop(1, "#e6c17f");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.58, -s * 0.035);
+    ctx.lineTo(s * 0.12, -s * 0.055);
+    ctx.quadraticCurveTo(s * 0.46, -s * 0.17, s * 0.78, -s * 0.10);
+    ctx.quadraticCurveTo(s * 0.86, 0, s * 0.78, s * 0.10);
+    ctx.quadraticCurveTo(s * 0.46, s * 0.17, s * 0.12, s * 0.055);
+    ctx.lineTo(-s * 0.58, s * 0.035);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "rgba(95,55,22,.35)"; ctx.lineWidth = 1.2;
+    for (let i = 0; i < 5; i += 1) { ctx.beginPath(); ctx.moveTo(-s * .22 + i * s * .18, -s * .035); ctx.lineTo(-s * .15 + i * s * .18, s * .035); ctx.stroke(); }
+    ctx.restore();
+    drawBaseballShape(ballX, ballY, s * 0.15, age / 210);
   }
 
   function drawBasketballDribblePin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58; const bounce = Math.abs(Math.sin(age / 180));
-    ctx.save(); ctx.translate(pin.x, pin.y - bounce * s * 0.28); drawSportStreaks(age, "rgba(255,138,28,0.35)");
-    drawSportBall(0, 0, s * 0.24, "#e97925", "#5c2d12");
-    ctx.strokeStyle = "#5c2d12"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-s*.22,0); ctx.lineTo(s*.22,0); ctx.moveTo(0,-s*.22); ctx.lineTo(0,s*.22); ctx.arc(0,0,s*.24,Math.PI*0.28,Math.PI*0.72); ctx.arc(0,0,s*.24,-Math.PI*0.72,-Math.PI*0.28); ctx.stroke();
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.55;
+    const bounce = Math.abs(Math.sin(age / 230));
+    const y = pin.y + s * 0.24 - bounce * s * 0.50;
+    ctx.save();
+    ctx.globalAlpha = 0.24;
+    ctx.fillStyle = "#315e8f";
+    ctx.beginPath(); ctx.ellipse(pin.x, pin.y + s * 0.44, s * 0.34, s * 0.08, 0, 0, TAU); ctx.fill();
     ctx.restore();
-    ctx.save(); ctx.globalAlpha = 0.22; ctx.fillStyle = "#315e8f"; ctx.beginPath(); ctx.ellipse(pin.x, pin.y + s * 0.36, s * 0.30, s * 0.07, 0, 0, TAU); ctx.fill(); ctx.restore();
+    drawBasketballShape(pin.x, y, s * 0.28, age / 260, true);
   }
 
   function drawBasketballHoopPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.56; const arc = Math.sin(Math.min(1, age / 900) * Math.PI);
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(255,138,28,0.40)");
-    ctx.strokeStyle = "#ef3340"; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(s * 0.25, -s * 0.12, s * 0.25, s * 0.08, 0, 0, TAU); ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,0.75)"; ctx.lineWidth = 2; for(let i=0;i<5;i++){ ctx.beginPath(); ctx.moveTo(s*(0.05+i*.10), -s*.05); ctx.lineTo(s*(0.00+i*.10), s*.20); ctx.stroke(); }
-    drawSportBall(-s * 0.25 + arc * s * 0.55, -s * 0.35 + Math.sin(age/250)*5, s * 0.13, "#e97925", "#5c2d12"); ctx.restore();
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.58;
+    const t = clamp(age / 1600, 0, 1);
+    const boardX = pin.x + s * 0.42;
+    const boardY = pin.y - s * 0.34;
+    const hoopX = pin.x + s * 0.10;
+    const hoopY = pin.y - s * 0.02;
+    const arcT = clamp(Math.min(t, 0.76) / 0.76, 0, 1);
+    const ballX = t < 0.76 ? lerp(pin.x - s * 0.70, hoopX, arcT) : hoopX + s * 0.02;
+    const ballY = t < 0.76 ? pin.y - s * 0.12 - Math.sin(arcT * Math.PI) * s * 0.46 : lerp(hoopY + s * 0.02, hoopY + s * 0.42, (t - 0.76) / 0.24);
+    ctx.save();
+    ctx.translate(boardX, boardY);
+    ctx.fillStyle = "rgba(255,255,255,0.92)"; ctx.strokeStyle = "#6e879f"; ctx.lineWidth = Math.max(3, s * 0.025);
+    roundRect(ctx, -s * 0.16, -s * 0.26, s * 0.38, s * 0.52, s * 0.03); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "#ef3340"; ctx.lineWidth = Math.max(4, s * 0.05);
+    ctx.beginPath(); ctx.moveTo(-s * 0.10, 0); ctx.lineTo(-s * 0.10, s * 0.10); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.translate(hoopX, hoopY);
+    ctx.strokeStyle = "#ef3340"; ctx.lineWidth = Math.max(4, s * 0.055);
+    ctx.beginPath(); ctx.ellipse(0, 0, s * 0.28, s * 0.10, 0, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = "#e4dcc7"; ctx.lineWidth = Math.max(2, s * 0.024);
+    for (let i = -2; i <= 2; i += 1) { ctx.beginPath(); ctx.moveTo(i * s * 0.09, s * 0.05); ctx.lineTo(i * s * 0.05, s * 0.40); ctx.stroke(); }
+    for (let i = 0; i < 3; i += 1) { ctx.beginPath(); ctx.moveTo(-s * (0.20 - i * 0.10), s * (0.14 + i * 0.10)); ctx.lineTo(s * (0.20 - i * 0.10), s * (0.14 + i * 0.10)); ctx.stroke(); }
+    ctx.restore();
+    drawBasketballShape(ballX, ballY, s * 0.18, age / 240, true);
+    ctx.save();
+    ctx.translate(hoopX, hoopY);
+    ctx.strokeStyle = "#d92a3a"; ctx.lineWidth = Math.max(2.4, s * 0.034);
+    ctx.beginPath(); ctx.ellipse(0, 0, s * 0.28, s * 0.10, 0, 0, TAU); ctx.stroke();
+    ctx.restore();
   }
 
   function drawHockeyPuckPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58; const slap = Math.sin(Math.min(1, age / 520) * Math.PI) * 0.70;
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(223,247,255,0.65)");
-    ctx.rotate(-0.65 + slap); ctx.strokeStyle = "#222"; ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(-s*.34,-s*.40); ctx.lineTo(s*.12,s*.25); ctx.lineTo(s*.42,s*.20); ctx.stroke(); ctx.restore();
-    ctx.save(); ctx.fillStyle = "#111"; ctx.beginPath(); ctx.ellipse(pin.x + s*.42, pin.y + s*.18, s*.18, s*.07, 0, 0, TAU); ctx.fill(); ctx.restore();
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.58;
+    const t = clamp(age / 1700, 0, 1);
+    const contact = 0.52;
+    const puckY = pin.y + s * 0.20;
+    const stickX = t < contact ? lerp(pin.x - s * 0.74, pin.x - s * 0.12, t / contact) : lerp(pin.x - s * 0.12, pin.x + s * 0.26, (t - contact) / (1 - contact));
+    const puckX = t < contact ? pin.x + s * 0.04 : pin.x + s * (0.04 + ((t - contact) / (1 - contact)) * 0.88);
+    drawForwardArrowTrail(pin.x + s * 0.02, puckY, puckX, puckY, "#dff7ff");
+    ctx.save();
+    ctx.translate(stickX, puckY - s * 0.10);
+    ctx.strokeStyle = "#c1121f"; ctx.lineWidth = Math.max(10, s * 0.12); ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(-s * 0.04, -s * 0.42); ctx.lineTo(s * 0.18, 0); ctx.lineTo(s * 0.58, 0); ctx.stroke();
+    ctx.strokeStyle = "#1b1b1b"; ctx.lineWidth = Math.max(4, s * 0.042);
+    ctx.beginPath(); ctx.moveTo(-s * 0.04, -s * 0.42); ctx.lineTo(s * 0.04, -s * 0.26); ctx.moveTo(s * 0.42, 0); ctx.lineTo(s * 0.58, 0); ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = "#111"; ctx.strokeStyle = "#444"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(puckX, puckY, s * 0.18, s * 0.065, 0, 0, TAU); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.18)"; ctx.beginPath(); ctx.ellipse(puckX, puckY - s * .02, s * .13, s * .025, 0, 0, TAU); ctx.fill();
+    ctx.restore();
   }
 
   function drawCurlingPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58;
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(223,247,255,0.65)");
-    ctx.fillStyle = "rgba(220,247,255,.45)"; roundRect(ctx, -s*.55, s*.17, s*1.10, s*.10, s*.05); ctx.fill();
-    ctx.fillStyle = "#9aa3af"; ctx.beginPath(); ctx.ellipse(s*.12, s*.12, s*.26, s*.14, 0, 0, TAU); ctx.fill(); ctx.fillStyle = "#ef3340"; roundRect(ctx, s*.03, -s*.05, s*.18, s*.10, s*.04); ctx.fill();
-    ctx.rotate(Math.sin(age/160)*0.10); ctx.strokeStyle = "#7b4a23"; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-s*.45, -s*.42); ctx.lineTo(-s*.06, s*.20); ctx.stroke(); ctx.restore();
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.85;
+    const stoneT = clamp(age / 1900, 0, 1);
+    const stoneX = pin.x - s * .42 + stoneT * s * .94;
+    ctx.save(); ctx.translate(pin.x, pin.y); ctx.fillStyle = "rgba(220,247,255,.45)"; roundRect(ctx, -s * .72, s * .20, s * 1.46, s * .14, s * .06); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle = "#9aa3af"; ctx.strokeStyle = "#5d6470"; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(stoneX, pin.y + s * .16, s * .30, s * .15, 0, 0, TAU); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#ef3340"; roundRect(ctx, stoneX - s * .11, pin.y - s * .01, s * .22, s * .11, s * .04); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(pin.x - s * .26, pin.y); ctx.rotate(Math.sin(age / 160) * 0.11); ctx.strokeStyle = "#7b4a23"; ctx.lineWidth = Math.max(6, s * .07); ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(-s * .45, -s * .42); ctx.lineTo(-s * .06, s * .20); ctx.stroke(); ctx.strokeStyle = "#ffe36d"; ctx.lineWidth = Math.max(5, s * .06); ctx.beginPath(); ctx.moveTo(-s * .10, s * .22); ctx.lineTo(s * .08, s * .25); ctx.stroke(); ctx.restore();
   }
 
   function drawFootballThrowPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58;
-    ctx.save(); ctx.translate(pin.x, pin.y); ctx.rotate(-0.40 + Math.sin(age/160)*0.12); drawSportStreaks(age, "rgba(255,255,255,0.48)");
-    ctx.fillStyle = "#8b4a24"; ctx.strokeStyle = "#4b260f"; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(0, 0, s*.34, s*.19, 0, 0, TAU); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-s*.12,0); ctx.lineTo(s*.12,0); for(let i=-2;i<=2;i++){ctx.moveTo(i*s*.035,-s*.04); ctx.lineTo(i*s*.035,s*.04);} ctx.stroke(); ctx.restore();
+    const age = current - pin.rocket.startedAt; const s = layout.pinH * 1.48; const t = clamp(age / 1550, 0, 1);
+    const x = pin.x - s * .50 + t * s * .98;
+    const y = pin.y - s * .10 - Math.sin(t * Math.PI) * s * .28;
+    drawForwardArrowTrail(pin.x - s * .52, pin.y + s * .05, x - s * .08, y, "rgba(255,255,255,0.55)");
+    ctx.save(); ctx.translate(x, y); ctx.rotate(-0.34 + t * 1.06); ctx.fillStyle = "#8b4a24"; ctx.strokeStyle = "#4b260f"; ctx.lineWidth = 2.8; ctx.beginPath(); ctx.ellipse(0, 0, s * .36, s * .20, 0, 0, TAU); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(-s * .12, 0); ctx.lineTo(s * .12, 0); ctx.stroke();
+    for (let i = -4; i <= 4; i += 1) { const yy = i * s * .022; ctx.beginPath(); ctx.moveTo(i * s * .024, yy - s * .042); ctx.lineTo(i * s * .024, yy + s * .042); ctx.stroke(); }
+    ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-s * .24, -s * .02); ctx.lineTo(-s * .17, -s * .02); ctx.moveTo(s * .17, -s * .02); ctx.lineTo(s * .24, -s * .02); ctx.stroke();
+    ctx.restore();
   }
 
   function drawSoccerGoalPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.56; const kick = Math.sin(Math.min(1, age/800)*Math.PI);
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(255,255,255,0.55)");
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3; roundRect(ctx, s*.16, -s*.28, s*.58, s*.46, 3); ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth=1.5; for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(s*(.16+i*.145),-s*.28);ctx.lineTo(s*(.16+i*.145),s*.18);ctx.stroke();}
-    drawSportBall(-s*.34 + kick*s*.75, -s*.05, s*.13, "#ffffff", "#222"); ctx.restore();
+    const age = current - pin.rocket.startedAt; const s = layout.pinH * 1.48; const kick = clamp(age / 1380, 0, 1);
+    ctx.save(); ctx.translate(pin.x, pin.y);
+    ctx.strokeStyle = "#f6f6f6"; ctx.lineWidth = Math.max(3, s * .045); roundRect(ctx, s * .12, -s * .38, s * .78, s * .62, 5); ctx.stroke();
+    ctx.strokeStyle = "#e7dfcf"; ctx.lineWidth = 2.1;
+    for (let i = 1; i < 5; i += 1) { ctx.beginPath(); ctx.moveTo(s * (.12 + i * .155), -s * .38); ctx.lineTo(s * (.12 + i * .155), s * .24); ctx.stroke(); }
+    for (let i = 1; i < 4; i += 1) { ctx.beginPath(); ctx.moveTo(s * .12, -s * .38 + i * s * .155); ctx.lineTo(s * .90, -s * .38 + i * s * .155); ctx.stroke(); }
+    ctx.restore();
+    const bx = pin.x - s * .46 + kick * s * 0.92;
+    const by = pin.y - s * .03 - Math.sin(kick * Math.PI) * s * .12;
+    drawForwardArrowTrail(pin.x - s * .50, pin.y, bx - s * .10, by, "rgba(255,255,255,0.50)");
+    drawSoccerBallShape(bx, by, s * .17, age / 320);
   }
 
   function drawTennisServePin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.56; const swing = Math.sin(Math.min(1,age/650)*Math.PI)*0.95;
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(195,255,82,0.45)"); ctx.rotate(-0.60+swing);
-    ctx.strokeStyle="#415a77"; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-s*.10,s*.34); ctx.lineTo(s*.18,-s*.12); ctx.stroke(); ctx.beginPath(); ctx.ellipse(s*.25,-s*.24,s*.18,s*.24,.25,0,TAU); ctx.stroke(); ctx.restore();
-    drawSportBall(pin.x+s*.40, pin.y-s*.35+Math.sin(age/150)*4, s*.08, "#ccff33", "#6b8e00");
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.42;
+    const t = clamp(age / 1650, 0, 1);
+    const shoulderX = pin.x - s * 0.16;
+    const shoulderY = pin.y + s * 0.02;
+    const handX = lerp(shoulderX - s * 0.08, shoulderX + s * 0.34, t);
+    const handY = lerp(shoulderY + s * 0.18, shoulderY - s * 0.22, Math.sin(t * Math.PI * 0.5));
+    const angle = lerp(-1.02, 0.54, t);
+    const ballT = clamp((t - 0.50) / 0.50, 0, 1);
+    const ballX = t < 0.50 ? pin.x + s * 0.14 : pin.x + s * (0.14 + ballT * 0.92);
+    const ballY = t < 0.50 ? pin.y - s * 0.10 : pin.y - s * (0.10 + ballT * 0.14);
+    drawForwardArrowTrail(pin.x + s * 0.10, pin.y - s * 0.06, ballX, ballY, "rgba(195,255,82,0.45)");
+
+    ctx.save();
+    ctx.translate(handX, handY);
+    ctx.rotate(angle);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = Math.max(5, s * 0.050);
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.14, s * 0.38);
+    ctx.lineTo(-s * 0.02, s * 0.18);
+    ctx.stroke();
+
+    const gripGrad = ctx.createLinearGradient(-s * 0.16, s * 0.38, -s * 0.02, s * 0.18);
+    gripGrad.addColorStop(0, "#0f1115");
+    gripGrad.addColorStop(1, "#2a2f38");
+    ctx.strokeStyle = gripGrad;
+    ctx.lineWidth = Math.max(8, s * 0.090);
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.16, s * 0.40);
+    ctx.lineTo(-s * 0.01, s * 0.15);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#43d4de";
+    ctx.lineWidth = Math.max(8, s * 0.095);
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.01, s * 0.15);
+    ctx.lineTo(s * 0.09, 0);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#111111";
+    ctx.lineWidth = Math.max(6, s * 0.062);
+    ctx.beginPath();
+    ctx.ellipse(s * 0.28, -s * 0.10, s * 0.24, s * 0.33, 0.10, 0, TAU);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#43d4de";
+    ctx.lineWidth = Math.max(4, s * 0.040);
+    ctx.beginPath();
+    ctx.moveTo(s * 0.02, s * 0.14);
+    ctx.lineTo(s * 0.12, 0.02);
+    ctx.lineTo(s * 0.20, -s * 0.02);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(s * 0.12, 0.02);
+    ctx.lineTo(s * 0.40, 0.02);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(20,24,31,0.88)";
+    ctx.lineWidth = Math.max(1.2, s * 0.018);
+    for (let i = -4; i <= 4; i += 1) {
+      ctx.beginPath();
+      ctx.moveTo(s * (0.10 + i * 0.04), -s * 0.40);
+      ctx.lineTo(s * (0.18 + i * 0.04), s * 0.20);
+      ctx.stroke();
+    }
+    for (let i = -4; i <= 4; i += 1) {
+      ctx.beginPath();
+      ctx.moveTo(s * 0.02, -s * 0.12 + i * s * 0.07);
+      ctx.lineTo(s * 0.50, -s * 0.12 + i * s * 0.07);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    drawSportBall(ballX, ballY, s * .09, "#ccff33", "#6b8e00");
   }
 
   function drawGolfDrivePin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58; const swing = Math.sin(Math.min(1,age/700)*Math.PI)*1.1;
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(255,255,255,0.45)"); ctx.rotate(-0.75+swing); ctx.strokeStyle="#555"; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(-s*.15,-s*.40); ctx.lineTo(s*.20,s*.34); ctx.lineTo(s*.34,s*.32); ctx.stroke(); ctx.restore();
-    drawSportBall(pin.x+s*.45, pin.y+s*.25, s*.07, "#ffffff", "#bbb");
-  }
-
-  function drawVolleyballSpikePin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s = layout.pinH * 0.58; const hit = Math.sin(Math.min(1,age/600)*Math.PI);
-    ctx.save(); ctx.translate(pin.x, pin.y); drawSportStreaks(age, "rgba(255,255,255,0.50)");
-    drawSportBall(0, -s*.25 + hit*s*.25, s*.19, "#ffffff", "#315e8f"); ctx.fillStyle="#ffd17a"; ctx.beginPath(); ctx.ellipse(s*.28,-s*.32+hit*s*.25,s*.13,s*.08,-.4,0,TAU); ctx.fill(); ctx.restore();
+    const age = current - pin.rocket.startedAt; const s = layout.pinH * 1.55;
+    const t = clamp(age / 1700, 0, 1);
+    const gripX = pin.x - s * 0.10 + t * s * 0.18;
+    const gripY = pin.y - s * 0.10 + Math.sin(t * Math.PI) * s * 0.10;
+    const angle = lerp(-1.15, 0.65, t);
+    const ballT = clamp((t - 0.54) / 0.46, 0, 1);
+    const ballX = t < 0.54 ? pin.x + s * 0.18 : pin.x + s * (0.18 + ballT * 0.92);
+    const ballY = t < 0.54 ? pin.y + s * 0.30 : pin.y + s * (0.30 - Math.sin(ballT * Math.PI) * 0.16);
+    drawForwardArrowTrail(pin.x + s * .18, pin.y + s * .30, ballX, ballY, "rgba(255,255,255,0.45)");
+    ctx.save(); ctx.strokeStyle = "#5f7f3f"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(pin.x - s * .50, pin.y + s * .44); ctx.lineTo(pin.x + s * .58, pin.y + s * .44); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(gripX, gripY); ctx.rotate(angle); ctx.strokeStyle = "#555"; ctx.lineWidth = Math.max(4, s * .05); ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(-s * .04, -s * .42); ctx.lineTo(s * .10, -s * .08); ctx.lineTo(s * .22, s * .26); ctx.lineTo(s * .42, s * .23); ctx.stroke(); ctx.restore();
+    drawSportBall(ballX, ballY, s * .075, "#e7dfcf", "#b9b09d");
   }
 
   function drawBaseballCatchPin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s=layout.pinH*.58; const close=Math.min(1,age/700);
-    ctx.save(); ctx.translate(pin.x,pin.y); drawSportStreaks(age,"rgba(255,255,255,.45)"); ctx.fillStyle="#b97843"; ctx.strokeStyle="#6f3e1c"; ctx.lineWidth=3; ctx.beginPath(); ctx.ellipse(0,0,s*.28,s*.34,-.4,0,TAU); ctx.fill(); ctx.stroke(); ctx.strokeStyle="#5c2d12"; for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(i*s*.055,-s*.24);ctx.lineTo(i*s*.035,s*.22);ctx.stroke();} ctx.restore();
-    drawSportBall(pin.x+s*(.42-close*.28), pin.y-s*(.16-close*.08), s*.09, "#ffffff", "#c73b3b");
+    const age = current - pin.rocket.startedAt; const s = layout.pinH * 1.55; const close = clamp(age / 1200, 0, 1);
+    const bx = pin.x + s * (0.52 - close * .44); const by = pin.y - s * (0.18 - close * .06);
+    drawForwardArrowTrail(pin.x + s * .70, pin.y - s * .24, bx, by, "rgba(255,255,255,.45)");
+    ctx.save(); ctx.translate(pin.x - s * 0.02, pin.y + s * 0.02); ctx.rotate(-0.16);
+    ctx.fillStyle = "#b97843"; ctx.strokeStyle = "#6f3e1c"; ctx.lineWidth = Math.max(3, s * .03);
+    ctx.beginPath();
+    ctx.moveTo(-s * .34, s * .28);
+    ctx.quadraticCurveTo(-s * .48, -s * .08, -s * .24, -s * .42);
+    ctx.quadraticCurveTo(-s * .10, -s * .55, 0, -s * .40);
+    ctx.quadraticCurveTo(s * .10, -s * .55, s * .20, -s * .38);
+    ctx.quadraticCurveTo(s * .32, -s * .50, s * .40, -s * .28);
+    ctx.quadraticCurveTo(s * .50, -s * .32, s * .58, -s * .10);
+    ctx.quadraticCurveTo(s * .50, s * .08, s * .34, s * .24);
+    ctx.quadraticCurveTo(s * .10, s * .38, -s * .34, s * .28);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#8b4d23";
+    ctx.beginPath(); ctx.moveTo(-s * .16, -s * .18); ctx.lineTo(-s * .02, -s * .36); ctx.lineTo(s * .16, -s * .22); ctx.lineTo(s * .08, -s * .05); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "#f2c38c"; ctx.lineWidth = Math.max(2, s * .022);
+    const fingers = [-0.18, -0.04, 0.10, 0.24];
+    fingers.forEach((fx) => { ctx.beginPath(); ctx.moveTo(s * fx, -s * .30); ctx.quadraticCurveTo(s * (fx + 0.02), -s * .04, s * (fx - 0.01), s * .18); ctx.stroke(); });
+    ctx.beginPath(); ctx.moveTo(-s * .30, -s * .10); ctx.quadraticCurveTo(-s * .40, s * .06, -s * .34, s * .24); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s * .06, -s * .30); ctx.lineTo(s * .10, -s * .16); ctx.moveTo(-s * .02, -s * .24); ctx.lineTo(s * .14, -s * .10); ctx.moveTo(s * .02, -s * .18); ctx.lineTo(s * .18, -s * .04); ctx.stroke();
+    ctx.restore();
+    drawBaseballShape(bx, by, s * .09, age / 240);
   }
 
   function drawBowlingStrikePin(pin, current) {
-    const age = current - pin.rocket.startedAt; const s=layout.pinH*.58; ctx.save(); ctx.translate(pin.x,pin.y); drawSportStreaks(age,"rgba(255,231,125,.45)");
-    drawSportBall(-s*.28+Math.sin(age/220)*4,s*.08,s*.18,"#2b3f67","#14213d");
-    for(let i=0;i<4;i++){ctx.save();ctx.translate(s*(.14+i*.13),-s*(.18-(i%2)*.12));ctx.rotate(-.55+Math.sin(age/120+i)*.15);ctx.fillStyle="#fff9ee";roundRect(ctx,-s*.045,-s*.18,s*.09,s*.34,s*.045);ctx.fill();ctx.fillStyle="#d91622";ctx.fillRect(-s*.04,-s*.07,s*.08,s*.025);ctx.restore();} ctx.restore();
+    const age = current - pin.rocket.startedAt; const s = layout.pinH * 1.45;
+    const t = clamp(age / 1500, 0, 1); const hitT = clamp((t - 0.58) / 0.42, 0, 1); const ballX = -s * .68 + t * s * .98;
+    ctx.save(); ctx.translate(pin.x, pin.y + s * 0.02);
+    const positions = [{ x: s * .12, y: -s * .20 }, { x: s * .02, y: 0 }, { x: s * .22, y: 0 }, { x: -s * .08, y: s * .20 }, { x: s * .12, y: s * .20 }, { x: s * .32, y: s * .20 }];
+    positions.forEach((p, i) => {
+      const local = clamp((hitT - i * 0.04) * 1.8, 0, 1);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(local ? (-1.15 * local + Math.sin(age / 150 + i) * 0.10) : 0);
+      ctx.fillStyle = "#fff9ee"; ctx.strokeStyle = "#8c7d66"; ctx.lineWidth = 1.5;
+      roundRect(ctx, -s * .05, -s * .22, s * .10, s * .42, s * .05); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#d91622"; ctx.fillRect(-s * .045, -s * .08, s * .09, s * .028);
+      ctx.restore();
+    });
+    drawSportBall(ballX, s * .20, s * .19, "#2b3f67", "#14213d");
+    if (hitT > 0) { ctx.fillStyle = "#ffe36d"; for (let i = 0; i < 10; i += 1) drawStar(s * (.12 + Math.cos(i) * .42), s * .02 + Math.sin(i * 1.7) * s * .30, s * .035, s * .015, 5); }
+    ctx.restore();
+  }
+
+  function drawWheelchairRacerBase(cx, cy, s, age, opts = {}) {
+    const phase = (age / 280) % TAU;
+    const push = Math.sin(phase);
+    const body = opts.body || "#1f4faa";
+    const accent = opts.accent || "#ef3340";
+    const chair = opts.chair || "#2c3440";
+    const skin = opts.skin || "#d8a27a";
+    const helmet = opts.helmet || "#ffffff";
+    const rearR = s * (opts.rearR || 0.36);
+    const frontR = s * (opts.frontR || 0.16);
+    const rearX = cx - s * 0.12;
+    const rearY = cy;
+    const frontX = cx + s * 0.70;
+    const frontY = cy + s * 0.06;
+    const lean = opts.lean == null ? 0.42 : opts.lean;
+    const disc = !!opts.disc;
+    const spokeCount = opts.spokes || 8;
+
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = "#19324d";
+    ctx.beginPath(); ctx.ellipse(cx + s * 0.18, cy + rearR * 0.86, s * 0.82, s * 0.11, 0, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = chair;
+    ctx.lineWidth = Math.max(3, s * 0.03);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(rearX + rearR * 0.08, rearY - rearR * 0.05);
+    ctx.lineTo(cx + s * 0.18, cy - s * 0.22);
+    ctx.lineTo(frontX - frontR * 0.20, frontY - frontR * 0.30);
+    ctx.lineTo(frontX, frontY);
+    ctx.lineTo(cx + s * 0.10, cy - s * 0.02);
+    ctx.lineTo(rearX + rearR * 0.20, rearY + rearR * 0.22);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + s * 0.02, cy - s * 0.14);
+    ctx.lineTo(cx - s * 0.12, cy - s * 0.28);
+    ctx.lineTo(cx + s * 0.03, cy - s * 0.28);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(rearX, rearY);
+    ctx.strokeStyle = "#1a1a1a";
+    ctx.lineWidth = Math.max(4, s * 0.038);
+    ctx.beginPath(); ctx.arc(0, 0, rearR, 0, TAU); ctx.stroke();
+    if (disc) {
+      const g = ctx.createRadialGradient(-rearR * 0.26, -rearR * 0.28, rearR * 0.08, 0, 0, rearR * 0.96);
+      g.addColorStop(0, "#6e7681"); g.addColorStop(0.38, opts.discColor || "#222a33"); g.addColorStop(1, "#0f1218");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(0, 0, rearR * 0.90, 0, TAU); ctx.fill();
+      ctx.fillStyle = accent;
+      ctx.beginPath(); ctx.moveTo(-rearR * 0.70, 0); ctx.lineTo(-rearR * 0.14, -rearR * 0.28); ctx.lineTo(-rearR * 0.08, rearR * 0.22); ctx.closePath(); ctx.fill();
+    } else {
+      ctx.strokeStyle = "#757d88";
+      ctx.lineWidth = Math.max(1.5, s * 0.012);
+      for (let i = 0; i < spokeCount; i += 1) {
+        const a = age / 500 + i * TAU / spokeCount;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * rearR * 0.88, Math.sin(a) * rearR * 0.88); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = "#d6d9de"; ctx.beginPath(); ctx.arc(0, 0, rearR * 0.08, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(frontX, frontY);
+    ctx.strokeStyle = "#1d1d1d";
+    ctx.lineWidth = Math.max(3, s * 0.024);
+    ctx.beginPath(); ctx.arc(0, 0, frontR, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = "#707780";
+    ctx.lineWidth = Math.max(1.2, s * 0.010);
+    for (let i = 0; i < 6; i += 1) { const a = age / 450 + i * TAU / 6; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * frontR * 0.88, Math.sin(a) * frontR * 0.88); ctx.stroke(); }
+    if (opts.frontRim) { ctx.strokeStyle = opts.frontRim; ctx.lineWidth = Math.max(2, s * 0.014); ctx.beginPath(); ctx.arc(0, 0, frontR * 0.96, 0, TAU); ctx.stroke(); }
+    ctx.fillStyle = "#d6d9de"; ctx.beginPath(); ctx.arc(0, 0, frontR * 0.08, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    const shoulderX = rearX + rearR * 0.10;
+    const shoulderY = rearY - rearR * 0.96;
+    const headX = shoulderX + s * 0.12;
+    const headY = shoulderY - s * 0.12;
+    ctx.save();
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.moveTo(shoulderX - s * 0.18, shoulderY + s * 0.10);
+    ctx.quadraticCurveTo(shoulderX + s * 0.04, shoulderY - s * lean, shoulderX + s * 0.34, shoulderY - s * 0.02);
+    ctx.lineTo(shoulderX + s * 0.10, shoulderY + s * 0.14);
+    ctx.quadraticCurveTo(shoulderX - s * 0.06, shoulderY + s * 0.16, shoulderX - s * 0.18, shoulderY + s * 0.10);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = helmet;
+    ctx.beginPath(); ctx.arc(headX, headY, s * 0.10, 0, TAU); ctx.fill();
+    ctx.strokeStyle = "#5a6470"; ctx.lineWidth = Math.max(1.5, s * 0.012);
+    ctx.beginPath(); ctx.moveTo(headX - s * 0.08, headY - s * 0.02); ctx.lineTo(headX + s * 0.08, headY - s * 0.05); ctx.stroke();
+    ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(headX + s * 0.02, headY + s * 0.03, s * 0.05, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    const armFront = { x: rearX + Math.cos(-0.55 + push * 0.36) * rearR * 0.82, y: rearY + Math.sin(-0.55 + push * 0.36) * rearR * 0.82 };
+    const armBack = { x: rearX + Math.cos(0.55 + push * 0.36) * rearR * 0.84, y: rearY + Math.sin(0.55 + push * 0.36) * rearR * 0.84 };
+    ctx.save();
+    ctx.strokeStyle = skin;
+    ctx.lineWidth = Math.max(6, s * 0.045);
+    ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(shoulderX + s * 0.04, shoulderY - s * 0.04); ctx.lineTo((shoulderX + armFront.x) / 2, (shoulderY + armFront.y) / 2); ctx.lineTo(armFront.x, armFront.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(shoulderX - s * 0.04, shoulderY + s * 0.04); ctx.lineTo((shoulderX + armBack.x) / 2 - s * 0.06, (shoulderY + armBack.y) / 2); ctx.lineTo(armBack.x, armBack.y); ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "#111";
+    ctx.beginPath(); ctx.ellipse(armFront.x, armFront.y, s * 0.05, s * 0.035, 0, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(armBack.x, armBack.y, s * 0.05, s * 0.035, 0, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    if (opts.number) {
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      roundRect(ctx, cx + s * 0.12, cy - s * 0.06, s * 0.16, s * 0.10, s * 0.02); ctx.fill();
+      ctx.fillStyle = "#1a2230";
+      ctx.font = `700 ${Math.max(10, s * 0.075)}px Arial, sans-serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(String(opts.number), cx + s * 0.20, cy - s * 0.01);
+      ctx.restore();
+    }
+  }
+
+  function drawWheelchairSprintPin(pin, current) {
+    const age = current - pin.rocket.startedAt;
+    const s = layout.pinH * 1.34;
+    const t = (age % pin.rocket.duration) / pin.rocket.duration;
+    const cx = pin.x - s * 0.10 + Math.sin(t * TAU) * s * 0.10;
+    const cy = pin.y + s * 0.04;
+    drawForwardArrowTrail(cx - s * 0.30, cy - s * 0.08, cx + s * 0.78, cy - s * 0.08, "rgba(255,255,255,0.35)");
+    drawWheelchairRacerBase(cx, cy, s, age, { body: "#0e5bb5", accent: "#ef3340", chair: "#202731", disc: true, discColor: "#2d3642", helmet: "#f4f8ff", number: 3, frontRim: "#111" });
   }
 
   function drawSkiJumpPin(pin, current) {
