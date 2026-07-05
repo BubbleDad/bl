@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#63d5ff" />
+  <title>Meowmoon Special Animation Gallery v1.0</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="special-animation-gallery.css" />
+</head>
+<body data-gallery-view="category">
+  <main class="gallery-shell">
+    <section class="hero">
+      <p class="eyebrow">Production special animations · Gallery v1.0</p>
+      <h1 id="categoryTitle">Special Animation Gallery</h1>
+      <p id="categoryDescription"></p>
+      <div class="stats" id="galleryStats" aria-live="polite"></div>
+    </section>
+
+    <section class="panel warning" id="galleryWarning" hidden>
+      <h2>Warnings</h2>
+      <div id="warningList"></div>
+    </section>
+
+    <section class="panel">
+      <div class="search-row">
+        <input id="gallerySearch" type="search" placeholder="Filter this gallery by name, key, or function" autocomplete="off" />
+        <a class="button secondary" href="special-animation-galleries.html">All galleries</a>
+        <a class="button secondary" href="index.html">Back to game</a>
+      </div>
+    </section>
+
+    <section id="galleryGrid" class="gallery-grid" aria-live="polite"></section>
+  </main>
+
+  <div class="large-preview-backdrop" id="largePreview" hidden>
+    <div class="large-preview-dialog" role="dialog" aria-modal="true" aria-labelledby="largePreviewTitle">
+      <div class="large-preview-header">
+        <h2 id="largePreviewTitle">Large preview</h2>
+        <button type="button" class="secondary" data-large-close>Close</button>
+      </div>
+      <iframe class="large-preview-frame" id="largePreviewFrame" title="Large animation preview"></iframe>
+    </div>
+  </div>
+
+  <script src="special-animation-gallery-data.js"></script>
+  <script src="special-animation-gallery.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+Meowmoon Bowling
+Version: v1.5.23 wombat-safe-placement-pilot
+App file: app-v1.5.23.js
+Cache name: meowmoon-bowling-v1-5-23-wombat-safe-placement-pilot-cache
+
+Cleanup status:
+1. Central animation registry: complete
+2. Pin lifecycle and level progression safety: complete
+3. Ball loading and phase-state cleanup: complete
+4. Rendering and code-section cleanup: complete
+5. Final docs, dead-code audit, and deployment checklist: complete
+
+Startup stability fix: title tap is handled before cat long-press, startup readiness checks rebuild only an incomplete first opening state, and startup now uses phase helpers.
+
+Start overlay fix: adds DOM-based Tap anywhere to play overlay and render-loop recovery.
+
+Transparent start overlay: keeps the reliable tap-catching overlay but removes visible text/card and uses transparent background.
+
+
+v1.5.0 wording note: Wording-only release changing “Tap anywhere to roll” to “Tap anywhere to play.” No gameplay or animation changes intended.
+
+v1.5.1 dead-code-cleanup note: Cleanup-only release removing clearly unused function declarations. No gameplay, registered animation, pin count, startup overlay, phase-state, service-worker behavior beyond version/cache bump, or visual design changes intended.
+
+v1.5.2 dead-code-cleanup-2 note: Cleanup-only release removing four additional unused function declarations. No stale type-handling branches, gameplay, registered animation, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or visual design changes intended.
+
+v1.5.3 crutches-animation note: Adds one registered special pin animation, Underarm Crutches Walk. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or visual design changes intended.
+
+v1.5.4 train-dragon-animations note: Adds the approved Connected Train and Friendly Dragon Fire registered special pin animations. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or visual design changes intended.
+
+v1.5.5 regional-animations note: Adds the approved Millyard Gear Machine, Light Rail Glide, Raptor Wing Glide, and Raptor Up Left Exit registered special pin animations. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or unrelated visual design changes intended.
+
+v1.5.6 review-bundle-animations note: Adds the approved Tugboat Bob, Jellybean Row Color Pop, Tulip Bloom Wave, Ribbon Dance, and Metro Train registered special pin animations. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or unrelated visual design changes intended.
+
+v1.5.7 cardinal-hanbok-ferry-animations note: Adds the approved Cardinal Glide v2, Cardinal Flies Off Screen v1, Hanbok Ribbon Twirl v2, and Mersey Ferry Glide v1 registered special pin animations. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or unrelated visual design changes intended.
+
+v1.5.8 eight-animation-bundle note: Replaces Cardinal Glide v2 with approved Cardinal Glide v3 and adds Tropical Bird Hop, Rainbow Bridge Pop, Mosaic Tile Shimmer, Column Circle Dance, Orange White Green Ribbon, Streetcar Bell Roll, and Camp Wagon Roll. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or unrelated visual design changes intended.
+
+v1.5.9 startup-status-timing-fix note: Clamps rotating-status elapsed time to zero on the first animation frame and falls back to the first status message if needed. This prevents the recoverable `undefined.split` startup error. No gameplay, animation, pin count, startup overlay, phase-state, lifecycle, ball-special, or visual-design changes intended.
+
+v1.5.10 dead-code-cleanup note: Removes 49 declaration-only functions confirmed to have no call sites, including obsolete pin helpers and unused animation drawing helpers. No gameplay, registered animation, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or visual-design changes intended.
+
+v1.5.11 remaining-dead-code-cleanup note: Removes seven declaration-only constants and aliases confirmed to have no references. No gameplay, registered animation, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or visual-design changes intended.
+
+v1.5.12 animation-replacements note: Replaces Millyard Gear Machine with approved v3, replaces Jellybean Row Color Pop with approved v3, replaces Camp Wagon Roll with approved v2, and adds Flower Wave Bloom v2 as a new registered special pin animation. No gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, service-worker behavior beyond version/cache bump, or unrelated visual-design changes intended.
+
+v1.5.13 legacy-branch-cleanup note: Removes unreachable launch/update/audio branches for unregistered legacy special pin types fish, penguin, treasure, wheelchair sprint, volleyball spike, ski jump, and gymnastics flip. No registered animation, gameplay, pin count, startup overlay, phase-state, lifecycle, ball-special, cache behavior beyond version/cache bump, or visual-design changes intended.
+
+Special Animation Gallery v1.0 note: Adds offline review-gallery tooling for the current production special animations, with category pages, per-animation preview frames, pause/restart controls, large preview mode, and registry-count checks. This is a gallery/tooling descriptor, not a Meowmoon Bowling game version. As of game v1.5.21 the gallery inventory contains 79 production animations.
+
+v1.5.14 garbage-gimmel-animations note: Adds the approved Garbage Bin Lift v11 and Gimmel Three Drums v3 as registered special pin animations with ids `garbagebinlift` and `gimmelthreedrums`. No gameplay rules, scoring, pin counts, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+v1.5.15 starship-sofa-animations note: Adds the approved Friendly Starship Glide v1 and Sofa Shuffle Five Pillows v1 as registered special pin animations with ids `friendlystarshipglide` and `sofashufflefivepillows`. No gameplay rules, scoring, pin counts, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+v1.5.16 jellybean-safe-area-fix note: Caps the Jellybean Row Color Pop v3 wrapper scale using its full horizontal draw extent so the purple rightmost house remains visible on narrow tablet/mobile canvases. No animation timing, house count, color order, scoring, pin counts, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+v1.5.17 cardinalflyoff-top-safe-area note: Adds a top-edge safe-area offset to Cardinal Flies Off Screen v1 so its launch pose remains fully visible for top-row pins while preserving the later offscreen flight. No animation duration, scoring, pin counts, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+v1.5.18 friendlystarship-center-anchor note: Forces Friendly Starship Glide v1 to render from the logical screen-center anchor instead of the triggering pin location so edge-triggered starship previews are not clipped. Registry key, duration, trigger logic, scoring, pin counts, startup overlay behavior, phase-state rules, and external dependencies are unchanged.
+
+v1.5.19 yellowchickhatch-animation note: Adds Yellow Chick Hatch v4 as a new registered special pin animation with id `yellowchickhatch` and duration 5200 ms. The supplied v4 drawing code is preserved, with a game wrapper for bottom-center pin anchoring, safe placement/scale, elapsed clamping, and deterministic stored variants. No scoring, ball behavior, pin physics, aiming, controls, level progression, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+
+v1.5.20 babystegosaurushatch-animation note: Adds Baby Stegosaurus Hatch v2 as a new registered special pin animation with id `babystegosaurushatch` and duration 5200 ms. The supplied v2 drawing code is preserved, with a game wrapper for bottom-center pin anchoring, safe placement/scale, elapsed clamping, and deterministic stored two-variant selection. No scoring, ball behavior, pin physics, aiming, controls, level progression, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+
+v1.5.21 australian-animals-animation note: Adds Kangaroo Pouch Surprise v5 and Wombat Burrow Builder v4 as new registered special pin animations with ids `kangaroopouchsurprise` and `wombatburrowbuilder`. The supplied approved drawing code is preserved, with game wrappers for bottom-center pin anchoring, safe placement/scale, elapsed clamping, and deterministic stored variants. No scoring, ball behavior, pin physics, aiming, controls, level progression, startup overlay behavior, phase-state rules, or external dependencies changed.
+
+v1.5.22 animation-replacements note: Replaces the existing `trainlinked`, `tennisserve`, and `kangaroopouchsurprise` production implementations with approved Connected Train v5, Tennis Serve v9, and Kangaroo Pouch Surprise v7 under the unchanged registry identifiers. No new selectable animation ids, scoring changes, ball behavior changes, pin physics changes, aiming/control changes, level progression changes, startup overlay behavior changes, phase-state rule changes, or external dependencies were introduced.
+
+v1.5.23 wombat-safe-placement-pilot note: Adds a Wombat-only metadata-driven `containAll` safe-placement pilot. The new shared placement helper is active only for `wombatburrowbuilder`; no other special animations were migrated. Wombat artwork, variants, timing, choreography, internal tunnel clipping, outside-wombat compositing, registry identifier, and lifecycle behavior are preserved.

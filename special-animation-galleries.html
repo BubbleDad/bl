@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#63d5ff" />
+  <title>Meowmoon Special Animation Gallery v1.0</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="special-animation-gallery.css" />
+</head>
+<body data-gallery-view="index">
+  <main class="gallery-shell">
+    <section class="hero">
+      <p class="eyebrow">Offline review tooling · Gallery v1.0</p>
+      <h1>Special Animation Gallery</h1>
+      <p>
+        Review every currently integrated production special animation from
+        Meowmoon Bowling. These pages reuse the production animation registry
+        and preview the animations outside normal gameplay.
+      </p>
+      <div class="stats" id="galleryStats" aria-live="polite"></div>
+    </section>
+
+    <section class="panel warning" id="galleryWarning" hidden>
+      <h2>Warnings</h2>
+      <div id="warningList"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Find an animation</h2>
+      <div class="search-row">
+        <input id="gallerySearch" type="search" placeholder="Search by display name, key, category, or draw function" autocomplete="off" />
+        <a class="button secondary" href="index.html">Back to game</a>
+      </div>
+      <div id="searchResults" class="category-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Gallery pages</h2>
+      <div id="categoryGrid" class="category-grid"></div>
+    </section>
+
+    <p class="footer-note">
+      Inventory source: <code>SPECIAL_ANIMATION_REGISTRY</code> in the current
+      production app file. Old standalone review drafts are intentionally not
+      included here.
+    </p>
+  </main>
+
+  <script src="special-animation-gallery-data.js"></script>
+  <script src="special-animation-gallery.js"></script>
+</body>
+</html>
